@@ -119,7 +119,8 @@ function pintarTextos() {
   document.title = (c.nombre || "Mi tienda") + " · Crochet hecho a mano";
   $("#eslogan").textContent = c.eslogan || "";
   $("#descripcion").textContent = c.descripcion || "";
-  $("#textoPedidos").textContent = c.textoPedidos || "";
+  pintarPersonalizados();
+  pintarInfo();
   $("#anio").textContent = new Date().getFullYear();
   const saludo = "¡Hola " + (c.nombre || "") + "! 😊 Quisiera información sobre sus productos.";
   $$("[data-wa]").forEach((a) => {
@@ -440,6 +441,14 @@ $("#btnGoogle").addEventListener("click", async () => {
     errorEntrar(e);
   }
 });
+$("#btnFacebook").addEventListener("click", async () => {
+  errorEntrar("");
+  try {
+    await nube.entrarConFacebook();
+  } catch (e) {
+    errorEntrar(e);
+  }
+});
 $("#formCorreo").addEventListener("submit", async (e) => {
   e.preventDefault();
   errorEntrar("");
@@ -515,94 +524,194 @@ $("#desplegable").addEventListener("click", async (e) => {
 /* ---------- confirmar y enviar pedido ---------- */
 let tipoEnvio = "bolsa";
 let personalizado = null;
+const entregas = () => (estado.config.entregas || []).filter((e) => e && e.nombre);
+const pagos = () => (estado.config.pagos || []).filter(Boolean);
+const fechaMinima = () => {
+  const d = new Date();
+  d.setDate(d.getDate() + (Number(estado.config.diasAnticipacion) || 0));
+  return d.toISOString().slice(0, 10);
+};
+function textoAnticipacion() {
+  const n = Number(estado.config.diasAnticipacion) || 0;
+  return n ? "Pide con al menos " + (n === 7 ? "una semana" : n + " días") + " de anticipación 🧶" : "";
+}
 function abrirConfirmar(tipo) {
   tipoEnvio = tipo;
   const items = itemsParaEnviar();
-  $("#resumenPedido").innerHTML =
-    items
-      .map((it) => `<div class="fila-res"><span>${it.cant} × ${esc(it.nombre)}</span><b>${it.subtotal == null ? "A consultar" : dinero(it.subtotal)}</b></div>`)
-      .join("") + (tipo === "bolsa" && totalBolsa() ? `<div class="fila-res total"><span>Total aproximado</span><b>${dinero(totalBolsa())}</b></div>` : "");
+  $("#resumenPedido").innerHTML = items
+    .map((it) => `<div class="fila-res"><span>${it.cant} × ${esc(it.nombre)}</span><b>${it.subtotal == null ? "A cotizar" : dinero(it.subtotal)}</b></div>`)
+    .join("");
   const u = estado.usuario;
   const perf = estado.perfil || {};
-  $("#cNombre").value = perf.nombre || u.displayName || (tipo === "personalizado" ? personalizado.nombre : "") || "";
+  $("#cNombre").value = perf.nombre || u.displayName || "";
   $("#cTel").value = perf.telefono || "";
   $("#cDir").value = perf.direccion || "";
-  $("#cFecha").value = tipo === "personalizado" ? personalizado.fecha : "";
-  $("#cFecha").min = new Date().toISOString().slice(0, 10);
+  // entregas
+  const lista = entregas();
+  const previa = lista.findIndex((e) => e.nombre === perf.entrega);
+  $("#cEntrega").innerHTML = lista.length
+    ? lista
+        .map(
+          (e, k) => `<label class="opcion-radio"><input type="radio" name="entrega" value="${k}" ${k === (previa >= 0 ? previa : 0) ? "checked" : ""}>
+          <span>${esc(e.nombre)}</span><b>${e.precio ? dinero(e.precio) : "Gratis"}</b></label>`
+        )
+        .join("")
+    : `<label class="opcion-radio"><input type="radio" name="entrega" value="-1" checked><span>Lo coordinamos por WhatsApp</span><b></b></label>`;
+  $("#cNotaEntregas").textContent = estado.config.notaEntregas || "";
+  // pagos
+  const ps = pagos();
+  $("#cPago").innerHTML = ps.map((pg, k) => `<button type="button" class="chip-op ${(perf.pago ? pg === perf.pago : k === 0) ? "elegido" : ""}" data-v="${esc(pg)}">${esc(pg)}</button>`).join("");
+  $("#cPago").closest(".campo").classList.toggle("oculto", !ps.length);
+  $("#cFecha").min = fechaMinima();
+  $("#cFecha").value = tipo === "personalizado" && personalizado.fecha >= fechaMinima() ? personalizado.fecha : "";
+  $("#cAnticipacion").textContent = textoAnticipacion();
   $("#errorConfirmar").classList.add("oculto");
+  actualizarConfirmar();
   abrir("modalConfirmar");
 }
+function entregaElegida() {
+  const k = +($("#cEntrega input:checked") || {}).value;
+  return entregas()[k] || { nombre: "Por coordinar", precio: 0, pideDireccion: false };
+}
+function actualizarConfirmar() {
+  const e = entregaElegida();
+  $("#campoDir").classList.toggle("oculto", !e.pideDireccion);
+  const items = itemsParaEnviar();
+  const sub = items.reduce((s, i) => s + (i.subtotal || 0), 0);
+  const porCotizar = items.some((i) => i.subtotal == null);
+  const envio = Number(e.precio) || 0;
+  $("#cTotalFinal").innerHTML =
+    (sub ? `<div class="fila-res"><span>Productos</span><b>${dinero(sub)}</b></div>` : "") +
+    `<div class="fila-res"><span>Entrega</span><b>${envio ? dinero(envio) : "—"}</b></div>` +
+    `<div class="fila-res total"><span>Total${porCotizar ? " (+ lo que se cotiza)" : ""}</span><b>${dinero(sub + envio)}</b></div>`;
+}
+$("#cEntrega").addEventListener("change", actualizarConfirmar);
+$("#cPago").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-v]");
+  if (!b) return;
+  $$("#cPago .chip-op").forEach((x) => x.classList.toggle("elegido", x === b));
+});
 function itemsParaEnviar() {
   if (tipoEnvio === "personalizado") {
-    const d = [{ titulo: "Quiere", valor: personalizado.que, precio: 0 }];
-    if (personalizado.colores) d.push({ titulo: "Colores", valor: personalizado.colores, precio: 0 });
-    return [{ productoId: "personalizado", nombre: "Pedido personalizado", imagen: "", cant: 1, precioUnidad: null, subtotal: null, detalle: d }];
+    const P = personalizado;
+    const d = [{ titulo: "Idea", valor: P.que, precio: 0 }];
+    if (P.medida) d.push({ titulo: "Medida", valor: P.medida, precio: 0 });
+    if (P.uso) d.push({ titulo: "Uso", valor: P.uso, precio: 0 });
+    if (P.colores) d.push({ titulo: "Colores", valor: P.colores, precio: 0 });
+    if (P.accesorios) d.push({ titulo: "Accesorios", valor: P.accesorios, precio: 0 });
+    if (P.foto) d.push({ titulo: "Foto de referencia", valor: "Sí (ver en el panel)", precio: 0 });
+    return [{ productoId: "personalizado", nombre: "Personalizado: " + (P.categoria || "Idea especial"), imagen: "", cant: 1, precioUnidad: null, subtotal: null, detalle: d }];
   }
   return estado.bolsa.map((i) => {
     const p = prodDe(i);
     return { productoId: p.id, nombre: p.name, imagen: p.image || "", cant: i.cant, precioUnidad: tienePrecio(p) ? p.price + (i.extra || 0) : null, subtotal: precioItem(i), detalle: i.detalle || [] };
   });
 }
-$("#cEntrega").addEventListener("click", (e) => {
-  const b = e.target.closest("[data-v]");
-  if (!b) return;
-  $$("#cEntrega .chip-op").forEach((x) => x.classList.toggle("elegido", x === b));
-  $("#campoDir").classList.toggle("oculto", b.dataset.v !== "Envío a domicilio");
-});
+function mensajeParaDueno(pedido, codigo) {
+  const l = [];
+  l.push("🧶 *¡Nuevo pedido #" + codigo + "!*");
+  l.push("");
+  for (const i of pedido.items) {
+    l.push("• " + i.cant + " x " + i.nombre + (i.subtotal == null ? " (a cotizar)" : " (" + dinero(i.subtotal) + ")"));
+    for (const d of i.detalle || []) l.push("   - " + d.titulo + ": " + d.valor);
+  }
+  l.push("");
+  l.push("🛵 " + pedido.entrega + (pedido.entregaPrecio ? " (" + dinero(pedido.entregaPrecio) + ")" : ""));
+  if (pedido.cliente.direccion) l.push("📍 " + pedido.cliente.direccion);
+  if (pedido.pago) l.push("💳 " + pedido.pago);
+  if (pedido.fecha) l.push("📅 Para el " + pedido.fecha.split("-").reverse().join("/"));
+  l.push("💰 Total: " + dinero(pedido.total) + (pedido.hayPorConsultar ? " + lo que se cotiza" : ""));
+  l.push("");
+  l.push("👤 " + pedido.cliente.nombre + " · " + pedido.cliente.telefono);
+  return l.join("\n");
+}
+function avisoAlCelular(pedido, codigo) {
+  const tema = (estado.config.avisoNtfy || "").trim();
+  if (!tema) return;
+  fetch("https://ntfy.sh/", {
+    method: "POST",
+    body: JSON.stringify({
+      topic: tema,
+      title: "Nuevo pedido #" + codigo + " de " + pedido.cliente.nombre,
+      message: mensajeParaDueno(pedido, codigo).replace(/\*/g, ""),
+      tags: ["yarn", "tada"],
+      priority: 5,
+      click: location.origin + location.pathname + "#panel",
+    }),
+  }).catch(() => {});
+}
 $("#formConfirmar").addEventListener("submit", async (e) => {
   e.preventDefault();
   const u = estado.usuario;
   if (!u) return;
-  const entrega = $("#cEntrega .elegido").dataset.v;
+  const ent = entregaElegida();
   const datos = {
     nombre: $("#cNombre").value.trim(),
     telefono: $("#cTel").value.trim(),
-    direccion: entrega === "Envío a domicilio" ? $("#cDir").value.trim() : "",
+    direccion: ent.pideDireccion ? $("#cDir").value.trim() : "",
   };
-  if (entrega === "Envío a domicilio" && !datos.direccion) {
-    $("#errorConfirmar").textContent = "Escribe la dirección de entrega.";
+  const error = (m) => {
+    $("#errorConfirmar").textContent = m;
     $("#errorConfirmar").classList.remove("oculto");
-    return;
-  }
+  };
+  if (ent.pideDireccion && !datos.direccion) return error("Escribe la dirección de entrega.");
+  if ($("#cFecha").value && $("#cFecha").value < fechaMinima()) return error(textoAnticipacion() || "Elige otra fecha.");
   const items = itemsParaEnviar();
-  const total = items.reduce((s, i) => s + (i.subtotal || 0), 0);
+  const subtotal = items.reduce((s, i) => s + (i.subtotal || 0), 0);
+  const pago = ($("#cPago .elegido") || {}).dataset?.v || "";
   const pedido = {
     uid: u.uid,
     email: u.email || "",
     cliente: datos,
-    entrega,
+    entrega: ent.nombre,
+    entregaPrecio: Number(ent.precio) || 0,
+    pago,
+    tipo: tipoEnvio,
     fecha: $("#cFecha").value || "",
     items,
-    total: Math.round(total * 100) / 100,
+    total: Math.round((subtotal + (Number(ent.precio) || 0)) * 100) / 100,
     hayPorConsultar: items.some((i) => i.subtotal == null),
     estado: "nuevo",
     creado: nube.F.serverTimestamp(),
   };
+  if (tipoEnvio === "personalizado" && personalizado.foto) pedido.fotoRef = personalizado.foto;
+  // La ventana de WhatsApp se abre ya (si se abre después, el celular la bloquea)
+  const conWa = estado.config.whatsappAlEnviar !== false && !!estado.config.whatsapp;
+  const ventana = conWa ? window.open("", "_blank") : null;
   const btn = $("#btnConfirmar");
   btn.disabled = true;
   btn.textContent = "Enviando…";
   try {
     const ref = await nube.F.addDoc(nube.F.collection(nube.db, "pedidos"), pedido);
-    nube.F.setDoc(nube.F.doc(nube.db, "usuarios", u.uid), { ...datos, email: u.email || "", actualizado: nube.F.serverTimestamp() }, { merge: true }).catch(() => {});
-    estado.perfil = { ...(estado.perfil || {}), ...datos };
+    const codigo = ref.id.slice(0, 6).toUpperCase();
+    const textoWa = mensajeParaDueno(pedido, codigo);
+    if (ventana) ventana.location.href = linkWa(textoWa);
+    $("#exitoWa").href = linkWa(textoWa);
+    $("#exitoWa").classList.toggle("oculto", !conWa);
+    avisoAlCelular(pedido, codigo);
+    nube.F.setDoc(nube.F.doc(nube.db, "usuarios", u.uid), { ...datos, entrega: ent.nombre, pago, email: u.email || "", actualizado: nube.F.serverTimestamp() }, { merge: true }).catch(() => {});
+    estado.perfil = { ...(estado.perfil || {}), ...datos, entrega: ent.nombre, pago };
     if (tipoEnvio === "bolsa") {
       estado.bolsa = [];
       guardarBolsa();
       pintarBolsa();
     } else {
       $("#formPersonalizado").reset();
+      quitarFotoPersonalizado();
+      $$("#pCategorias .chip-op, #pUso .chip-op").forEach((x) => x.classList.remove("elegido"));
     }
     cerrar("modalConfirmar");
-    celebrar(ref.id.slice(0, 6).toUpperCase());
+    celebrar(codigo);
   } catch (err) {
     console.error(err);
-    $("#errorConfirmar").textContent = nube.mensajeError(err);
-    $("#errorConfirmar").classList.remove("oculto");
+    if (ventana) ventana.close();
+    error(nube.mensajeError(err));
   } finally {
     btn.disabled = false;
     btn.textContent = "💌 Enviar pedido";
   }
 });
+
 
 /* ---------- celebración ---------- */
 function celebrar(codigo) {
@@ -676,29 +785,111 @@ function abrirMisPedidos() {
 }
 
 /* ---------- pedido personalizado ---------- */
+function pintarPersonalizados() {
+  const c = estado.config;
+  $("#textoPersonalizados").textContent = c.textoPersonalizados || c.textoPedidos || "";
+  const cats = (c.personalizados || []).filter((x) => x && x.nombre);
+  $("#precios").innerHTML = cats.some((x) => x.desde)
+    ? `<h3>Nuestros precios</h3>` +
+      cats
+        .filter((x) => x.desde)
+        .map((x) => `<div class="fila-precio"><span>${esc(x.emoji || "🧶")} ${esc(x.nombre)}</span><b>desde ${dinero(x.desde)}</b></div>`)
+        .join("")
+    : "";
+  $("#pCategorias").innerHTML = cats.map((x) => `<button type="button" class="chip-op" data-v="${esc(x.nombre)}">${esc(x.emoji || "")} ${esc(x.nombre)}</button>`).join("");
+  $("#pFecha").min = fechaMinima();
+  $("#pAnticipacion").textContent = textoAnticipacion();
+}
+function elegirChip(cont) {
+  cont.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-v]");
+    if (!b) return;
+    const ya = b.classList.contains("elegido");
+    $$(".chip-op", cont).forEach((x) => x.classList.remove("elegido"));
+    if (!ya) b.classList.add("elegido");
+  });
+}
+elegirChip($("#pCategorias"));
+elegirChip($("#pUso"));
+let fotoPersonalizado = "";
+function quitarFotoPersonalizado() {
+  fotoPersonalizado = "";
+  $("#pFotoVista").classList.add("oculto");
+  $("#pFotoTexto").textContent = "📷 Toca para agregar una foto";
+}
+$("#pFoto").addEventListener("change", async (e) => {
+  const f = e.target.files[0];
+  if (!f) return;
+  try {
+    const img = await new Promise((ok, mal) => {
+      const im = new Image();
+      im.onload = () => ok(im);
+      im.onerror = mal;
+      im.src = URL.createObjectURL(f);
+    });
+    const lado = 640;
+    const k = Math.min(1, lado / Math.max(img.naturalWidth, img.naturalHeight));
+    const c = document.createElement("canvas");
+    c.width = Math.round(img.naturalWidth * k);
+    c.height = Math.round(img.naturalHeight * k);
+    c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+    fotoPersonalizado = c.toDataURL("image/jpeg", 0.72);
+    $("#pFotoVista").src = fotoPersonalizado;
+    $("#pFotoVista").classList.remove("oculto");
+    $("#pFotoTexto").textContent = "✓ Foto lista (toca para cambiarla)";
+  } catch (err) {
+    aviso("No se pudo usar esa foto, prueba con otra");
+  }
+});
 let botonPersonalizado = "wa";
 $("#btnPersonalizadoNube").addEventListener("click", () => (botonPersonalizado = "nube"));
 $("#btnPersonalizadoWa").addEventListener("click", () => (botonPersonalizado = "wa"));
 $("#formPersonalizado").addEventListener("submit", (e) => {
   e.preventDefault();
   personalizado = {
-    nombre: $("#pNombre").value.trim(),
+    categoria: ($("#pCategorias .elegido") || {}).dataset?.v || "",
     que: $("#pQue").value.trim(),
+    medida: $("#pMedida").value.trim(),
+    uso: ($("#pUso .elegido") || {}).dataset?.v || "",
     colores: $("#pColores").value.trim(),
+    accesorios: $("#pAccesorios").value.trim(),
     fecha: $("#pFecha").value,
+    foto: fotoPersonalizado,
   };
   if (nube.activa && botonPersonalizado === "nube") {
     conSesion("Inicia sesión para enviar tu pedido personalizado 💕", () => abrirConfirmar("personalizado"));
     return;
   }
+  const P = personalizado;
   const texto =
     "¡Hola! 😊 Quiero un pedido personalizado:\n\n" +
-    "👤 Nombre: " + personalizado.nombre + "\n" +
-    "🧶 Quiero: " + personalizado.que + "\n" +
-    (personalizado.colores ? "🎨 Colores: " + personalizado.colores + "\n" : "") +
-    (personalizado.fecha ? "📅 Para: " + personalizado.fecha.split("-").reverse().join("/") + "\n" : "");
+    (P.categoria ? "🧶 Tipo: " + P.categoria + "\n" : "") +
+    "💡 Idea: " + P.que + "\n" +
+    (P.medida ? "📏 Medida: " + P.medida + "\n" : "") +
+    (P.uso ? "🎯 Para: " + P.uso + "\n" : "") +
+    (P.colores ? "🎨 Colores: " + P.colores + "\n" : "") +
+    (P.accesorios ? "🎀 Accesorios: " + P.accesorios + "\n" : "") +
+    (P.fecha ? "📅 Para: " + P.fecha.split("-").reverse().join("/") + "\n" : "") +
+    (P.foto ? "\n(Te envío la foto de referencia aquí mismo)" : "");
   window.open(linkWa(texto), "_blank");
 });
+
+/* ---------- cómo pedir, entregas y pagos ---------- */
+function pintarInfo() {
+  const c = estado.config;
+  const pasos = (c.pasos || []).filter((p) => p && p.titulo);
+  $("#pasos").innerHTML = pasos.map((p, k) => `<div class="paso"><div class="num">${k + 1}</div><h3>${esc(p.titulo)}</h3><p>${esc(p.texto || "")}</p></div>`).join("");
+  $("#como-pedir").classList.toggle("oculto", !pasos.length);
+  $("#listaEntregas").innerHTML = (c.entregas || [])
+    .filter((e) => e && e.nombre)
+    .map((e) => `<li><span>${esc(e.nombre)}</span><b>${e.precio ? dinero(e.precio) : "Gratis"}</b></li>`)
+    .join("");
+  $("#notaEntregas").textContent = c.notaEntregas || "";
+  $("#listaPagos").innerHTML = (c.pagos || []).filter(Boolean).map((p) => `<li><span>✓ ${esc(p)}</span></li>`).join("");
+  $("#textoAnticipacion").textContent = textoAnticipacion() || "Pregúntanos por fechas disponibles.";
+  $("#btnFacebook").classList.toggle("oculto", !c.facebook);
+}
+
 
 /* ---------- visor de fotos ---------- */
 $("#vpFoto").addEventListener("click", () => {

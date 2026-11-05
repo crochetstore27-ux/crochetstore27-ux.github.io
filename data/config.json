@@ -1,10 +1,115 @@
 {
   "nombre": "Lizzy Store",
-  "eslogan": "Detalles tejidos a mano con mucho amor",
-  "descripcion": "Ramos, flores eternas y gorritos para mascotas hechos a crochet. Cada pieza se teje a mano y puedes personalizar los colores a tu gusto.",
+  "eslogan": "Amigurumis, llaveritos, flores y ramos tejidos a mano",
+  "descripcion": "Cada pieza se teje a mano con mucho amor en El Salvador. Elige del catálogo o pídenos tu idea: mascotas, personajes, personas y más. Hacemos envíos a todo El Salvador.",
   "whatsapp": "50360070579",
   "instagram": "lizzystore_sv",
   "moneda": "$",
-  "categorias": ["Ramos", "Flores", "Gorritos para mascotas"],
-  "textoPedidos": "¿Tienes una idea especial? Cuéntanos qué te gustaría, los colores y para cuándo lo necesitas, y te enviamos el precio por WhatsApp."
+  "categorias": [
+    "Ramos",
+    "Flores",
+    "Gorritos para mascotas"
+  ],
+  "personalizados": [
+    {
+      "nombre": "Amigurumi (persona o personaje)",
+      "emoji": "🧸",
+      "desde": 10
+    },
+    {
+      "nombre": "Mini llavero",
+      "emoji": "🔑",
+      "desde": 3.5
+    },
+    {
+      "nombre": "Flores",
+      "emoji": "🌷",
+      "desde": 4
+    },
+    {
+      "nombre": "Ramo",
+      "emoji": "💐",
+      "desde": 5
+    },
+    {
+      "nombre": "Mascota",
+      "emoji": "🐶",
+      "desde": null
+    },
+    {
+      "nombre": "Decoración",
+      "emoji": "🏡",
+      "desde": null
+    },
+    {
+      "nombre": "Otro",
+      "emoji": "✨",
+      "desde": null
+    }
+  ],
+  "pasos": [
+    {
+      "titulo": "Elige o cuéntanos tu idea",
+      "texto": "Escoge del catálogo o envíanos una foto de tu idea o de referencia, con la medida en cm y si lo quieres para decorar o como llavero."
+    },
+    {
+      "titulo": "Pide con anticipación",
+      "texto": "Cada amigurumi lleva tiempo y esfuerzo. Haz tu pedido con al menos una semana de anticipación."
+    },
+    {
+      "titulo": "Elige la entrega",
+      "texto": "Entregas por $1 los sábados en puntos de encuentro o envíos a todo El Salvador por $4 (3 a 4 días)."
+    },
+    {
+      "titulo": "Paga fácil",
+      "texto": "Por transferencia o contra entrega."
+    },
+    {
+      "titulo": "¡Listo!",
+      "texto": "Te confirmamos por WhatsApp y empezamos a tejer tu pedido 💕"
+    }
+  ],
+  "entregas": [
+    {
+      "nombre": "Entrega en Metrocentro San Salvador (sábado)",
+      "precio": 1,
+      "pideDireccion": false
+    },
+    {
+      "nombre": "Entrega en Metrogalerías (sábado)",
+      "precio": 1,
+      "pideDireccion": false
+    },
+    {
+      "nombre": "Casillero en Metrogalerías",
+      "precio": 1,
+      "pideDireccion": false
+    },
+    {
+      "nombre": "Entrega en Centro Comercial San Luis (sábado)",
+      "precio": 1,
+      "pideDireccion": false
+    },
+    {
+      "nombre": "Entrega en Unicentro Metrópolis (sábado)",
+      "precio": 1,
+      "pideDireccion": false
+    },
+    {
+      "nombre": "Envío a todo El Salvador (3 a 4 días)",
+      "precio": 4,
+      "pideDireccion": true
+    }
+  ],
+  "notaEntregas": "Envíos personalizados, departamentales y a casilleros: pregúntanos por tu zona.",
+  "pagos": [
+    "Transferencia",
+    "Contra entrega"
+  ],
+  "diasAnticipacion": 7,
+  "whatsappAlEnviar": true,
+  "avisoNtfy": "",
+  "facebook": false,
+  "textoPersonalizados": "Puedes pedir personalizados como mascotas, personajes, personas e ideas. También puedes agregar accesorios (como bolsos, mariposas, sombreros, etc.) por un costo extra. Envíanos una foto de tu idea o de referencia y la medida en cm para cotizarte mejor.",
+  "textoPedidos": "¿Tienes una idea especial? Cuéntanos qué te gustaría y te enviamos el precio."
 }

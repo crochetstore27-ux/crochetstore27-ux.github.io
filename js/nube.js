@@ -45,6 +45,16 @@ export async function entrarConGoogle() {
     throw e;
   }
 }
+export async function entrarConFacebook() {
+  const p = new A.FacebookAuthProvider();
+  p.addScope("email");
+  try {
+    return await A.signInWithPopup(auth, p);
+  } catch (e) {
+    if (e.code === "auth/popup-blocked") return A.signInWithRedirect(auth, p);
+    throw e;
+  }
+}
 export const entrarConCorreo = (correo, clave) => A.signInWithEmailAndPassword(auth, correo, clave);
 export async function crearCuenta(nombre, correo, clave) {
   const r = await A.createUserWithEmailAndPassword(auth, correo, clave);
@@ -68,6 +78,8 @@ export function mensajeError(e) {
     "auth/popup-closed-by-user": "Cerraste la ventana antes de terminar.",
     "auth/cancelled-popup-request": "",
     "auth/unauthorized-domain": "Falta autorizar este dominio en Firebase (Authentication → Configuración → Dominios autorizados).",
+    "auth/account-exists-with-different-credential": "Ya tienes cuenta con ese correo usando otra forma (por ejemplo Google). Entra con esa.",
+    "auth/operation-not-allowed": "Esta forma de iniciar sesión todavía no está activada.",
     "auth/network-request-failed": "Sin conexión a internet. Intenta de nuevo.",
     "permission-denied": "No tienes permiso para hacer esto.",
   };

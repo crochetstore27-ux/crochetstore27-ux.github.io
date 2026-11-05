@@ -126,3 +126,15 @@ code { background: var(--rosa-claro); padding: .1em .4em; border-radius: 6px; fo
 .fila3 label { font-size: .82rem; font-weight: 800; display: grid; gap: 4px; }
 .agregar-grupo { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
 .agregar-grupo > span { font-weight: 800; font-size: .9rem; }
+.foto-ref { display: flex; align-items: center; gap: 12px; background: #fff; border: 2px solid var(--borde); border-radius: 12px; padding: 8px; margin-bottom: 10px; text-decoration: none; font-weight: 800; }
+.foto-ref img { width: 90px; height: 90px; object-fit: cover; border-radius: 8px; }
+.fila-lista { display: grid; gap: 8px; align-items: center; padding: 6px 0; border-bottom: 1px dashed var(--borde); }
+.fila-lista input:not([type=checkbox]), .fila-lista textarea { font: inherit; padding: .5em .7em; border-radius: 10px; border: 2px solid var(--borde); outline: none; width: 100%; color: var(--texto); min-width: 0; }
+.fila-lista input:focus, .fila-lista textarea:focus { border-color: var(--rosa); }
+.mini-botones { display: flex; gap: 2px; }
+.mini-botones button { border: 0; background: var(--rosa-claro); color: var(--rosa-oscuro); width: 30px; height: 30px; border-radius: 8px; cursor: pointer; }
+@media (max-width: 640px) { .fila-lista { grid-template-columns: 1fr 1fr !important; } .fila-lista textarea, .fila-lista input[data-c="nombre"], .fila-lista input[data-c="titulo"], .fila-lista input[data-c=""] { grid-column: 1 / -1; } }
+.etiqueta-lista { font-weight: 800; display: block; margin: 6px 0; }
+hr.linea { border: 0; border-top: 1px dashed var(--borde); margin: 16px 0; }
+.guardado-flotante { position: sticky; top: 64px; z-index: 5; margin: 0 0 10px; text-align: center; background: var(--verde); color: #fff; border-radius: 999px; padding: .4em 1em; font-weight: 800; opacity: 0; transition: opacity .2s; pointer-events: none; }
+.guardado-flotante.visible { opacity: 1; }

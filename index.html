@@ -23,6 +23,7 @@
       <nav class="menu">
         <a class="enlace-menu" href="#catalogo">Catálogo</a>
         <a class="enlace-menu" href="#personalizado">Pedidos especiales</a>
+        <a class="enlace-menu" href="#como-pedir">Cómo pedir</a>
         <button class="btn btn-chico btn-bolsa" id="abrirBolsa" aria-label="Ver mi pedido">
           🛍️ <span class="txt-bolsa">Mi pedido</span> <span class="contador oculto" id="contador">0</span>
         </button>
@@ -79,22 +80,31 @@
         </div>
         <div class="caja-form">
           <div>
-            <h3>¿Cómo funciona?</h3>
-            <p id="textoPedidos"></p>
-            <ul>
-              <li>Elige los colores que más te gusten.</li>
-              <li>Agrega rosas extra, personajes o una tarjeta.</li>
-              <li>Te confirmamos precio y fecha de entrega.</li>
-            </ul>
+            <h3>Tu idea, hecha a mano</h3>
+            <p id="textoPersonalizados"></p>
+            <div class="precios" id="precios"></div>
           </div>
           <form id="formPersonalizado">
             <div class="campo">
-              <label for="pNombre">Tu nombre</label>
-              <input id="pNombre" required placeholder="Ej: María">
+              <label>¿Qué quieres que te hagamos?</label>
+              <div class="chips-op" id="pCategorias"></div>
             </div>
             <div class="campo">
-              <label for="pQue">¿Qué te gustaría?</label>
-              <textarea id="pQue" rows="3" required placeholder="Ej: Un ramo de 6 rosas con un gatito"></textarea>
+              <label for="pQue">Cuéntanos tu idea</label>
+              <textarea id="pQue" rows="3" required placeholder="Ej: Un amigurumi de mi perrito, café con manchas blancas"></textarea>
+            </div>
+            <div class="fila">
+              <div class="campo">
+                <label for="pMedida">Medida (cm)</label>
+                <input id="pMedida" inputmode="decimal" placeholder="Ej: 10 cm">
+              </div>
+              <div class="campo">
+                <label>¿Para qué es?</label>
+                <div class="chips-op" id="pUso">
+                  <button type="button" class="chip-op" data-v="Para decorar">🏡 Decorar</button>
+                  <button type="button" class="chip-op" data-v="Llavero">🔑 Llavero</button>
+                </div>
+              </div>
             </div>
             <div class="fila">
               <div class="campo">
@@ -102,10 +112,26 @@
                 <input id="pColores" placeholder="Ej: rosado y blanco">
               </div>
               <div class="campo">
-                <label for="pFecha">¿Para cuándo?</label>
-                <input id="pFecha" type="date">
+                <label for="pAccesorios">Accesorios (costo extra)</label>
+                <input id="pAccesorios" placeholder="Ej: bolso, mariposa, sombrero">
               </div>
             </div>
+            <div class="fila">
+              <div class="campo">
+                <label>Foto de tu idea o de referencia</label>
+                <label class="subir-foto" id="pFotoCaja">
+                  <input type="file" accept="image/*" id="pFoto" hidden>
+                  <span id="pFotoTexto">📷 Toca para agregar una foto</span>
+                  <img id="pFotoVista" class="oculto" alt="">
+                </label>
+              </div>
+              <div class="campo">
+                <label for="pFecha">¿Para cuándo?</label>
+                <input id="pFecha" type="date">
+                <small class="ayuda-op" id="pAnticipacion"></small>
+              </div>
+            </div>
+            <input id="pNombre" type="hidden">
             <button class="btn btn-rosa oculto" type="submit" id="btnPersonalizadoNube" style="width:100%;margin-bottom:10px">💌 Enviar mi pedido</button>
             <button class="btn btn-wa" type="submit" id="btnPersonalizadoWa" style="width:100%">
               <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.3-.5.1-1 .1-1.7-.1-.4-.1-.9-.3-1.5-.6-2.7-1.2-4.4-3.9-4.6-4.1-.1-.2-1.1-1.5-1.1-2.8 0-1.3.7-2 1-2.3.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.3 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.7 1.2 1.6 1.9 1.1 1 2 1.3 2.3 1.4.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.7-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.3Z"/></svg>
@@ -116,13 +142,28 @@
       </div>
     </section>
 
-    <section class="seccion">
+    <section class="seccion" id="como-pedir">
       <div class="contenedor">
-        <div class="titulo-seccion"><h2>Así de fácil es pedir</h2></div>
-        <div class="pasos">
-          <div class="paso"><div class="num">1</div><h3>Elige</h3><p>Mira el catálogo y agrega lo que te guste a tu pedido.</p></div>
-          <div class="paso"><div class="num">2</div><h3>Envíalo</h3><p>Inicia sesión con un toque y envía tu pedido desde aquí mismo.</p></div>
-          <div class="paso"><div class="num">3</div><h3>Recibe</h3><p>Lo tejemos con amor y coordinamos la entrega contigo.</p></div>
+        <div class="titulo-seccion"><h2>¿Cómo hacer tu pedido?</h2><p>Así de fácil 💕</p></div>
+        <div class="pasos" id="pasos"></div>
+      </div>
+    </section>
+
+    <section class="seccion entregas" id="entregas">
+      <div class="contenedor">
+        <div class="titulo-seccion"><h2>Entregas y pagos</h2></div>
+        <div class="dos-cajas">
+          <div class="caja-info">
+            <h3>🛵 Entregas y envíos</h3>
+            <ul class="lista-entregas" id="listaEntregas"></ul>
+            <p class="nota" id="notaEntregas"></p>
+          </div>
+          <div class="caja-info">
+            <h3>💳 Métodos de pago</h3>
+            <ul class="lista-entregas" id="listaPagos"></ul>
+            <h3 style="margin-top:18px">📅 Fechas</h3>
+            <p class="nota" id="textoAnticipacion"></p>
+          </div>
         </div>
       </div>
     </section>
@@ -135,7 +176,7 @@
         <a href="#" class="btn btn-wa btn-chico" data-wa>WhatsApp</a>
         <a href="#" class="btn btn-borde btn-chico" id="enlaceInstagram" target="_blank" rel="noopener">📸 Instagram</a>
       </div>
-      <small>Hecho a mano en El Salvador · <span id="anio"></span></small>
+      <small>Hecho a mano en El Salvador · <span id="anio"></span> · <a href="privacidad.html">Privacidad</a></small>
     </div>
   </footer>
 
@@ -199,6 +240,10 @@
         <svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>
         Continuar con Google
       </button>
+      <button class="btn btn-facebook oculto" id="btnFacebook">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4H7.1V12h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v2.9h-1.5c-1.5 0-2 .9-2 1.9V12h3.4l-.5 3.5h-2.9v8.4A12 12 0 0 0 24 12z"/></svg>
+        Continuar con Facebook
+      </button>
       <div class="separador"><span>o con tu correo</span></div>
       <div class="pestanas-mini">
         <button class="activa" data-modo="entrar">Ya tengo cuenta</button>
@@ -226,13 +271,16 @@
         <div class="campo"><label for="cTel">Tu WhatsApp</label><input id="cTel" type="tel" required placeholder="Ej: 7000 0000" autocomplete="tel"></div>
         <div class="campo">
           <label>¿Cómo lo recibes?</label>
-          <div class="chips-op" id="cEntrega">
-            <button type="button" class="chip-op elegido" data-v="Recoger">🏠 Lo recojo</button>
-            <button type="button" class="chip-op" data-v="Envío a domicilio">🛵 Envío a domicilio</button>
-          </div>
+          <div class="opciones-lista" id="cEntrega"></div>
+          <small class="ayuda-op" id="cNotaEntregas"></small>
         </div>
-        <div class="campo oculto" id="campoDir"><label for="cDir">Dirección de entrega</label><textarea id="cDir" rows="2" placeholder="Colonia, calle, número, punto de referencia"></textarea></div>
-        <div class="campo"><label for="cFecha">¿Para qué fecha lo necesitas?</label><input id="cFecha" type="date"></div>
+        <div class="campo oculto" id="campoDir"><label for="cDir">Dirección de entrega</label><textarea id="cDir" rows="2" placeholder="Departamento, municipio, colonia, calle, número y punto de referencia"></textarea></div>
+        <div class="campo">
+          <label>¿Cómo vas a pagar?</label>
+          <div class="chips-op" id="cPago"></div>
+        </div>
+        <div class="campo"><label for="cFecha">¿Para qué fecha lo necesitas?</label><input id="cFecha" type="date"><small class="ayuda-op" id="cAnticipacion"></small></div>
+        <div class="resumen total-final" id="cTotalFinal"></div>
         <p class="error oculto" id="errorConfirmar"></p>
         <button class="btn btn-rosa ancho" type="submit" id="btnConfirmar">💌 Enviar pedido</button>
       </form>
@@ -248,6 +296,7 @@
       <p class="codigo">Pedido <b id="codigoPedido"></b></p>
       <p id="textoExito">Ya recibimos tu pedido 💕 Te escribiremos por WhatsApp para confirmar los detalles y la entrega.</p>
       <div class="acciones centro-flex">
+        <a class="btn btn-wa oculto" id="exitoWa" target="_blank" rel="noopener">💬 Enviar también por WhatsApp</a>
         <button class="btn btn-rosa" id="exitoMisPedidos">📦 Ver mis pedidos</button>
         <button class="btn btn-borde" id="exitoCerrar">Seguir viendo</button>
       </div>

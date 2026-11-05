@@ -24,7 +24,8 @@ service cloud.firestore {
         && request.resource.data.items is list
         && request.resource.data.items.size() > 0
         && request.resource.data.items.size() <= 50
-        && request.resource.data.keys().hasOnly(['uid','email','cliente','entrega','fecha','items','total','hayPorConsultar','estado','creado'])
+        && request.resource.data.keys().hasOnly(['uid','email','cliente','entrega','entregaPrecio','pago','tipo','fecha','items','total','hayPorConsultar','estado','creado','fotoRef'])
+        && (!('fotoRef' in request.resource.data) || request.resource.data.fotoRef.size() < 600000)
         && request.resource.data.creado == request.time;
       allow read: if conSesion() && (resource.data.uid == request.auth.uid || esAdmin());
       allow update, delete: if esAdmin();

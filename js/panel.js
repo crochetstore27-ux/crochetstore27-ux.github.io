@@ -102,19 +102,74 @@ function montar() {
     </section>
 
     <section data-panel="ajustes" class="oculto">
+      <p class="guardado-flotante" id="estadoAjustes"></p>
       <div class="caja">
-        <div class="fila-titulo"><h2>Mi negocio</h2><span class="guardado" id="estadoAjustes"></span></div>
+        <h2>🏪 Datos del negocio</h2>
         <div class="fila">
           <div class="campo"><label>Nombre del negocio</label><input data-cf="nombre"></div>
           <div class="campo"><label>Frase corta</label><input data-cf="eslogan"></div>
         </div>
         <div class="campo"><label>Descripción (sale en la portada)</label><textarea rows="3" data-cf="descripcion"></textarea></div>
         <div class="fila">
-          <div class="campo"><label>WhatsApp (con código de país)</label><input data-cf="whatsapp" inputmode="numeric"></div>
+          <div class="campo"><label>WhatsApp (con código de país, ej: 50360070579)</label><input data-cf="whatsapp" inputmode="numeric"></div>
           <div class="campo"><label>Instagram (sin @)</label><input data-cf="instagram"></div>
         </div>
-        <div class="campo"><label>Texto de pedidos personalizados</label><textarea rows="3" data-cf="textoPedidos"></textarea></div>
-        <div class="campo"><label>Orden de las categorías (separadas por coma)</label><input data-cf="categorias"></div>
+        <div class="campo"><label>Orden de las categorías del catálogo (separadas por coma)</label><input data-cf="categorias"></div>
+      </div>
+
+      <div class="caja">
+        <h2>🔔 Avisos de pedidos nuevos</h2>
+        <label class="interruptor"><input type="checkbox" data-cf="whatsappAlEnviar"> Al enviar un pedido, abrir WhatsApp con el pedido listo para mandártelo</label>
+        <p class="ayuda">El cliente solo toca "Enviar" en WhatsApp y te llega el pedido completo a tu número.</p>
+        <hr class="linea">
+        <p><b>Aviso instantáneo a tu celular (gratis):</b> te llega una notificación con sonido aunque el cliente no envíe el WhatsApp.</p>
+        <details class="pasos-token">
+          <summary>¿Cómo lo activo? (2 minutos)</summary>
+          <ol>
+            <li>Instala la app <b>ntfy</b> en tu celular (<a href="https://play.google.com/store/apps/details?id=io.heckel.ntfy" target="_blank" rel="noopener">Android</a> · <a href="https://apps.apple.com/app/ntfy/id1625396347" target="_blank" rel="noopener">iPhone</a>).</li>
+            <li>Toca <b>Generar nombre secreto</b> aquí abajo.</li>
+            <li>En la app toca <b>+</b>, pega ese nombre en "Topic name" y toca <b>Subscribe</b>.</li>
+            <li>Toca <b>Probar aviso</b>. ¡Te debe sonar el celular! 📲</li>
+          </ol>
+        </details>
+        <div class="fila">
+          <div class="campo"><label>Nombre secreto del aviso</label><input data-cf="avisoNtfy" placeholder="Toca Generar"></div>
+          <div class="campo"><label>&nbsp;</label><div class="acciones" style="margin:0">
+            <button class="btn btn-borde btn-chico" id="pnGenerarNtfy">🎲 Generar nombre secreto</button>
+            <button class="btn btn-rosa btn-chico" id="pnProbarNtfy">📲 Probar aviso</button>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="caja">
+        <h2>🎨 Pedidos personalizados</h2>
+        <div class="campo"><label>Texto que ven los clientes</label><textarea rows="4" data-cf="textoPersonalizados"></textarea></div>
+        <label class="etiqueta-lista">Tipos de pedido y precio "desde" (deja el precio vacío si no quieres mostrarlo)</label>
+        <div data-lista="personalizados"></div>
+      </div>
+
+      <div class="caja">
+        <h2>🛵 Entregas y envíos</h2>
+        <p class="ayuda">Marca "Pide dirección" en los envíos a domicilio o departamentales.</p>
+        <div data-lista="entregas"></div>
+        <div class="campo" style="margin-top:12px"><label>Nota de entregas</label><input data-cf="notaEntregas"></div>
+        <div class="campo" style="max-width:260px"><label>Días de anticipación para pedir</label><input data-cf="diasAnticipacion" inputmode="numeric"></div>
+      </div>
+
+      <div class="caja">
+        <h2>💳 Métodos de pago</h2>
+        <div data-lista="pagos"></div>
+      </div>
+
+      <div class="caja">
+        <h2>📋 ¿Cómo hacer tu pedido? (pasos)</h2>
+        <div data-lista="pasos"></div>
+      </div>
+
+      <div class="caja">
+        <h2>🔐 Inicio de sesión con Facebook</h2>
+        <label class="interruptor"><input type="checkbox" data-cf="facebook"> Mostrar el botón "Continuar con Facebook"</label>
+        <p class="ayuda">Actívalo solo después de configurar Facebook en Firebase (te pasé los pasos en el chat). Google y correo ya funcionan.</p>
       </div>
     </section>
   </main>
@@ -238,9 +293,11 @@ function pintarPedidos() {
             ${(i.detalle || []).map((d) => `<div class="det">${esc(d.titulo)}: <b>${esc(d.valor)}</b>${d.precio ? " (+" + dinero(d.precio) + ")" : ""}</div>`).join("")}</li>`
           )
           .join("")}</ul>
+        ${p.fotoRef ? `<a class="foto-ref" href="${p.fotoRef}" target="_blank" rel="noopener"><img src="${p.fotoRef}" alt="Foto de referencia"><span>📷 Foto de referencia (toca para ampliar)</span></a>` : ""}
         <div class="datos">
           <div>📞 ${esc(p.cliente?.telefono || "")} · ${esc(p.email || "")}</div>
-          <div>${p.entrega === "Envío a domicilio" ? "🛵 Envío: " + esc(p.cliente?.direccion || "") : "🏠 Lo recoge"}</div>
+          <div>🛵 ${esc(p.entrega || "")}${p.entregaPrecio ? " (" + dinero(p.entregaPrecio) + ")" : ""}${p.cliente?.direccion ? "<br>📍 " + esc(p.cliente.direccion) : ""}</div>
+          ${p.pago ? `<div>💳 ${esc(p.pago)}</div>` : ""}
           ${p.fecha ? `<div>📅 Para el ${esc(p.fecha.split("-").reverse().join("/"))}</div>` : ""}
         </div>
         <div class="pie-pedido">
@@ -807,33 +864,123 @@ function conectarRecorte() {
 }
 
 /* ================= AJUSTES ================= */
+const LISTAS = {
+  personalizados: { campos: [["emoji", "Emoji", "60px"], ["nombre", "Tipo (ej: Amigurumi)", "1fr"], ["desde", "Desde $", "90px", "numero"]], nuevo: { emoji: "✨", nombre: "", desde: null }, agregar: "+ Agregar tipo" },
+  entregas: { campos: [["nombre", "Lugar o forma de entrega", "1fr"], ["precio", "Precio $", "90px", "numero"], ["pideDireccion", "Pide dirección", "auto", "check"]], nuevo: { nombre: "", precio: 1, pideDireccion: false }, agregar: "+ Agregar entrega" },
+  pagos: { campos: [[null, "Método de pago", "1fr"]], nuevo: "", agregar: "+ Agregar método" },
+  pasos: { campos: [["titulo", "Título del paso", "1fr"], ["texto", "Explicación", "2fr", "area"]], nuevo: { titulo: "", texto: "" }, agregar: "+ Agregar paso" },
+};
+function pintarLista(clave) {
+  const def = LISTAS[clave];
+  const filas = ctx.estado.config[clave] || [];
+  const cont = $(`#panelAdmin [data-lista="${clave}"]`);
+  const cols = def.campos.map((c) => c[2]).join(" ") + " auto";
+  cont.innerHTML =
+    filas
+      .map(
+        (f, k) => `<div class="fila-lista" style="grid-template-columns:${cols}" data-k="${k}">
+        ${def.campos
+          .map(([c, ph, , tipo]) => {
+            const v = c == null ? f : f[c];
+            if (tipo === "check") return `<label class="interruptor chico"><input type="checkbox" data-c="${c}" ${v ? "checked" : ""}> ${ph}</label>`;
+            if (tipo === "area") return `<textarea rows="2" data-c="${c}" placeholder="${ph}">${ctx.esc(v ?? "")}</textarea>`;
+            return `<input data-c="${c ?? ""}" placeholder="${ph}" value="${ctx.esc(tipo === "numero" ? (v == null || v === "" ? "" : v) : v ?? "")}" ${tipo === "numero" ? 'inputmode="decimal"' : ""}>`;
+          })
+          .join("")}
+        <span class="mini-botones"><button data-lm="subir" title="Subir">▲</button><button data-lm="bajar" title="Bajar">▼</button><button data-lm="quitar" title="Quitar">✕</button></span>
+      </div>`
+      )
+      .join("") + `<button class="enlace" data-lm="agregar">${def.agregar}</button>`;
+}
 function pintarAjustes() {
   $$("#panelAdmin [data-cf]").forEach((el) => {
     const v = ctx.estado.config[el.dataset.cf];
-    el.value = Array.isArray(v) ? v.join(", ") : v ?? "";
+    if (el.type === "checkbox") el.checked = el.dataset.cf === "whatsappAlEnviar" ? v !== false : !!v;
+    else el.value = Array.isArray(v) ? v.join(", ") : v ?? "";
   });
+  Object.keys(LISTAS).forEach(pintarLista);
 }
 let tAjustes;
+function guardarAjustes() {
+  $("#estadoAjustes").textContent = "Guardando…";
+  $("#estadoAjustes").classList.add("visible");
+  clearTimeout(tAjustes);
+  tAjustes = setTimeout(async () => {
+    try {
+      await F.setDoc(F.doc(db, "ajustes", "tienda"), limpiar(ctx.estado.config), { merge: true });
+      $("#estadoAjustes").textContent = "Guardado ✓ Tus clientes ya lo ven al recargar la página";
+      setTimeout(() => $("#estadoAjustes").classList.remove("visible"), 2500);
+    } catch (e) {
+      $("#estadoAjustes").classList.remove("visible");
+      ctx.aviso(ctx.nube.mensajeError(e), 4000);
+    }
+  }, 800);
+}
 function conectarAjustes() {
-  $$("#panelAdmin [data-cf]").forEach((el) =>
-    el.addEventListener("input", () => {
+  const panel = $('#panelAdmin [data-panel="ajustes"]');
+  panel.addEventListener("input", (e) => {
+    const el = e.target;
+    const c = ctx.estado.config;
+    if (el.dataset.cf) {
       const k = el.dataset.cf;
-      const c = ctx.estado.config;
-      if (k === "categorias") c[k] = el.value.split(",").map((s) => s.trim()).filter(Boolean);
+      if (el.type === "checkbox") c[k] = el.checked;
+      else if (k === "categorias") c[k] = el.value.split(",").map((s) => s.trim()).filter(Boolean);
       else if (k === "whatsapp") c[k] = el.value.replace(/\D/g, "");
       else if (k === "instagram") c[k] = el.value.trim().replace(/^@/, "");
+      else if (k === "diasAnticipacion") c[k] = Math.max(0, parseInt(el.value) || 0);
+      else if (k === "avisoNtfy") c[k] = el.value.trim().replace(/[^A-Za-z0-9_-]/g, "");
       else c[k] = el.value;
-      $("#estadoAjustes").textContent = "Guardando…";
-      clearTimeout(tAjustes);
-      tAjustes = setTimeout(async () => {
-        try {
-          await F.setDoc(F.doc(db, "ajustes", "tienda"), limpiar(c), { merge: true });
-          $("#estadoAjustes").textContent = "Guardado ✓ (recarga la tienda para verlo)";
-        } catch (e) {
-          $("#estadoAjustes").textContent = "";
-          ctx.aviso(ctx.nube.mensajeError(e), 4000);
-        }
-      }, 800);
-    })
-  );
+      return guardarAjustes();
+    }
+    const fila = el.closest("[data-k]");
+    if (!fila) return;
+    const clave = el.closest("[data-lista]").dataset.lista;
+    const def = LISTAS[clave];
+    const lista = c[clave] || (c[clave] = []);
+    const k = +fila.dataset.k;
+    const campo = el.dataset.c;
+    const tipo = (def.campos.find((x) => (x[0] ?? "") === campo) || [])[3];
+    let v = el.type === "checkbox" ? el.checked : el.value;
+    if (tipo === "numero") v = leerPrecio(v);
+    if (campo === "") lista[k] = v;
+    else lista[k] = { ...lista[k], [campo]: v };
+    guardarAjustes();
+  });
+  panel.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-lm]");
+    if (!b) return;
+    const clave = b.closest("[data-lista]").dataset.lista;
+    const c = ctx.estado.config;
+    const lista = c[clave] || (c[clave] = []);
+    const fila = b.closest("[data-k]");
+    const k = fila ? +fila.dataset.k : -1;
+    const acc = b.dataset.lm;
+    if (acc === "agregar") lista.push(typeof LISTAS[clave].nuevo === "object" ? { ...LISTAS[clave].nuevo } : LISTAS[clave].nuevo);
+    if (acc === "quitar") lista.splice(k, 1);
+    if (acc === "subir" && k > 0) [lista[k - 1], lista[k]] = [lista[k], lista[k - 1]];
+    if (acc === "bajar" && k < lista.length - 1) [lista[k + 1], lista[k]] = [lista[k], lista[k + 1]];
+    pintarLista(clave);
+    if (acc === "agregar") $(`#panelAdmin [data-lista="${clave}"] .fila-lista:last-of-type input, #panelAdmin [data-lista="${clave}"] .fila-lista:last-of-type textarea`)?.focus();
+    guardarAjustes();
+  });
+  $("#pnGenerarNtfy").addEventListener("click", () => {
+    const n = "lizzy-" + Math.random().toString(36).slice(2, 8) + Math.random().toString(36).slice(2, 8);
+    const inp = $('#panelAdmin [data-cf="avisoNtfy"]');
+    inp.value = n;
+    inp.dispatchEvent(new Event("input", { bubbles: true }));
+    try {
+      navigator.clipboard.writeText(n);
+      ctx.aviso("Nombre copiado 📋 Pégalo en la app ntfy", 3500);
+    } catch (e) {}
+  });
+  $("#pnProbarNtfy").addEventListener("click", async () => {
+    const tema = (ctx.estado.config.avisoNtfy || "").trim();
+    if (!tema) return ctx.aviso("Primero genera el nombre secreto");
+    try {
+      await fetch("https://ntfy.sh/", { method: "POST", body: JSON.stringify({ topic: tema, title: "¡Funciona! 🎉", message: "Así te avisaremos cuando llegue un pedido nuevo.", tags: ["yarn"], priority: 5 }) });
+      ctx.aviso("Aviso enviado 📲 Revisa tu celular", 3500);
+    } catch (e) {
+      ctx.aviso("No se pudo enviar el aviso. Revisa tu internet.");
+    }
+  });
 }

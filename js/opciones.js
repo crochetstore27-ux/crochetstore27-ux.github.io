@@ -33,7 +33,14 @@ export const colorDe = (nombre) => {
 };
 
 const lista = (nombres) => nombres.map((n) => ({ nombre: n, color: COLORES[n], precio: 0 }));
-const id = () => Math.random().toString(36).slice(2, 8);
+
+// Las plantillas usan ids fijos (t1, t2…) para que la elección del cliente siempre coincida
+let n = 0;
+const id = () => "t" + ++n;
+const conIds = (fn) => () => {
+  n = 0;
+  return fn();
+};
 
 export const PLANTILLAS = {
   Ramos: () => [
@@ -52,6 +59,7 @@ export const PLANTILLAS = {
     { id: id(), tipo: "texto", titulo: "Detalles que quieras agregar", precio: 0, ayuda: "Ej: con un lazo blanco" },
   ],
 };
+for (const k of Object.keys(PLANTILLAS)) PLANTILLAS[k] = conIds(PLANTILLAS[k]);
 PLANTILLAS.Flores = PLANTILLAS.Ramos;
 
 export function plantillaPara(categoria) {
