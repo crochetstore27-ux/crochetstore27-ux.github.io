@@ -1,0 +1,39 @@
+rules_version = '2';
+// Reglas de seguridad de la base de datos (se copian en Firebase → Firestore Database → Reglas).
+// Cambia el correo de abajo por el tuyo (el mismo que en js/firebase-config.js).
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function esAdmin() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email.lower() in ['CORREO_ADMIN'];
+    }
+    function conSesion() { return request.auth != null; }
+
+    // Catálogo, fotos y datos del negocio: todos pueden ver, solo el admin cambia
+    match /productos/{id} { allow read: if true; allow write: if esAdmin(); }
+    match /fotos/{id}     { allow read: if true; allow write: if esAdmin(); }
+    match /ajustes/{id}   { allow read: if true; allow write: if esAdmin(); }
+
+    // Pedidos: el cliente crea los suyos y solo ve los suyos; el admin ve y cambia todos
+    match /pedidos/{id} {
+      allow create: if conSesion()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.estado == 'nuevo'
+        && request.resource.data.items is list
+        && request.resource.data.items.size() > 0
+        && request.resource.data.items.size() <= 50
+        && request.resource.data.keys().hasOnly(['uid','email','cliente','entrega','fecha','items','total','hayPorConsultar','estado','creado'])
+        && request.resource.data.creado == request.time;
+      allow read: if conSesion() && (resource.data.uid == request.auth.uid || esAdmin());
+      allow update, delete: if esAdmin();
+    }
+
+    // Datos del cliente (nombre, teléfono, dirección) para no escribirlos cada vez
+    match /usuarios/{uid} {
+      allow read, write: if conSesion() && request.auth.uid == uid;
+      allow read: if esAdmin();
+    }
+  }
+}

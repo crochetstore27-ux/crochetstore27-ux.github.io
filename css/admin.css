@@ -82,3 +82,47 @@ code { background: var(--rosa-claro); padding: .1em .4em; border-radius: 6px; fo
 .area-recorte { position: relative; overflow: auto; flex: 1; display: grid; place-items: center; background: #f6eef1; border-radius: 12px; touch-action: none; }
 .area-recorte canvas { max-width: 100%; max-height: 66vh; cursor: crosshair; touch-action: none; }
 .modal-caja .botones { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+
+/* Panel dentro de la tienda */
+.panel-admin { position: fixed; inset: 0; z-index: 44; background: #fff7fa; overflow: auto; }
+.panel-admin .cabecera { position: sticky; }
+.fila-titulo { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.fila-titulo h2 { margin: 0; }
+.guardado { color: var(--verde); font-weight: 800; font-size: .9rem; }
+.globo { background: var(--rosa); color: #fff; border-radius: 999px; padding: 0 .5em; font-size: .8rem; margin-left: 4px; }
+.pestana.activa .globo { background: #fff; color: var(--rosa); }
+.filtros.izquierda { justify-content: flex-start; }
+
+.pedido-admin { border: 2px solid var(--borde); border-left-width: 8px; border-radius: 16px; padding: 14px; margin-bottom: 14px; background: #fff; }
+.pedido-admin.estado-nuevo { border-left-color: var(--rosa); box-shadow: 0 0 0 4px var(--rosa-claro); }
+.pedido-admin.estado-proceso { border-left-color: var(--naranja); }
+.pedido-admin.estado-listo { border-left-color: #29b6f6; }
+.pedido-admin.estado-entregado { border-left-color: var(--verde); opacity: .8; }
+.pedido-admin.estado-cancelado { border-left-color: #9e9e9e; opacity: .6; }
+.pedido-admin .cab { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+.pedido-admin .cab small { color: var(--texto-suave); }
+.pedido-admin select { font: 700 .9rem "Nunito", sans-serif; padding: .5em; border-radius: 10px; border: 2px solid var(--borde); background: #fff; color: var(--texto); }
+.pedido-admin ul { list-style: none; padding: 0; margin: 12px 0; }
+.pedido-admin li { padding: 8px 0; border-bottom: 1px dashed var(--borde); }
+.pedido-admin .derecha { float: right; font-weight: 800; color: var(--rosa); }
+.pedido-admin .det { font-size: .88rem; color: var(--texto-suave); padding-left: 12px; }
+.pedido-admin .datos { background: var(--rosa-claro); border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; font-size: .92rem; display: grid; gap: 3px; word-break: break-word; }
+
+.editor-opciones { grid-column: 1 / -1; background: var(--rosa-claro); border-radius: 14px; padding: 12px; }
+.grupo-edit { background: #fff; border-radius: 12px; padding: 10px; margin-bottom: 10px; border: 1px solid var(--borde); }
+.cab-grupo { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+.cab-grupo .tipo { font-size: .8rem; font-weight: 800; color: var(--rosa-oscuro); white-space: nowrap; }
+.cab-grupo input:not([type=checkbox]) { flex: 1; min-width: 160px; }
+.grupo-edit input:not([type=checkbox]):not([type=color]) { font: inherit; padding: .45em .7em; border-radius: 10px; border: 2px solid var(--borde); outline: none; width: 100%; color: var(--texto); }
+.grupo-edit input:focus { border-color: var(--rosa); }
+.interruptor.chico { font-size: .85rem; }
+.valores { display: grid; gap: 6px; }
+.valor { display: grid; grid-template-columns: auto 1fr auto 80px auto; gap: 6px; align-items: center; }
+.valor:not(:has(input[type=color])) { grid-template-columns: 1fr auto 80px auto; }
+.valor input[type=color] { width: 38px; height: 34px; border: 0; padding: 0; background: none; cursor: pointer; }
+.valor .mas { font-weight: 800; color: var(--texto-suave); font-size: .85rem; }
+.valor button { border: 0; background: none; cursor: pointer; color: var(--texto-suave); font-size: 1rem; }
+.fila3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+.fila3 label { font-size: .82rem; font-weight: 800; display: grid; gap: 4px; }
+.agregar-grupo { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.agregar-grupo > span { font-weight: 800; font-size: .9rem; }
