@@ -1,0 +1,84 @@
+/* Estilos del panel de administración (usa los colores de styles.css) */
+body.admin { background: #fff7fa; padding-bottom: 110px; }
+.admin .cabecera .contenedor { height: 60px; }
+.admin main { padding: 24px 0; }
+.caja { background: #fff; border-radius: 20px; box-shadow: var(--sombra); padding: 22px; margin-bottom: 20px; }
+.caja h2 { color: var(--rosa-oscuro); font-size: 1.5rem; }
+.ayuda { color: var(--texto-suave); font-size: .95rem; }
+details.pasos-token { background: var(--rosa-claro); border-radius: 14px; padding: 12px 16px; margin: 12px 0; }
+details.pasos-token summary { cursor: pointer; font-weight: 800; color: var(--rosa-oscuro); }
+details.pasos-token ol { margin: 10px 0 0; padding-left: 1.3em; }
+details.pasos-token li { margin-bottom: 6px; }
+code { background: var(--rosa-claro); padding: .1em .4em; border-radius: 6px; font-size: .92em; word-break: break-all; }
+.estado-conexion { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.punto { width: 12px; height: 12px; border-radius: 50%; background: #ccc; }
+.punto.ok { background: var(--whatsapp); }
+
+/* Pestañas */
+.pestanas { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.pestana {
+  border: 2px solid var(--borde); background: #fff; color: var(--texto); cursor: pointer;
+  font: 800 1rem "Nunito", sans-serif; padding: .7em 1.2em; border-radius: 14px;
+}
+.pestana.activa { background: var(--rosa); color: #fff; border-color: var(--rosa); }
+
+/* Zona para soltar PDF */
+.zona-pdf {
+  display: block; border: 3px dashed var(--rosa-suave); border-radius: 20px; padding: 34px 18px; text-align: center;
+  background: var(--rosa-claro); cursor: pointer; transition: background .15s, border-color .15s;
+}
+.zona-pdf:hover, .zona-pdf.encima { background: #ffe3ec; border-color: var(--rosa); }
+.zona-pdf .icono { font-size: 2.6rem; }
+.zona-pdf strong { display: block; font-size: 1.15rem; margin: 6px 0; }
+.progreso { margin-top: 14px; }
+.barra { height: 10px; background: var(--rosa-claro); border-radius: 99px; overflow: hidden; }
+.barra div { height: 100%; width: 0; background: var(--rosa); transition: width .3s; }
+
+/* Tarjetas de edición */
+.lista-edicion { display: grid; gap: 14px; }
+.editable {
+  display: grid; grid-template-columns: 130px 1fr; gap: 16px; background: #fff; border-radius: 16px;
+  border: 2px solid var(--borde); padding: 14px; position: relative;
+}
+.editable.apagado { opacity: .55; }
+.editable.nuevo { border-color: var(--rosa); box-shadow: 0 0 0 4px var(--rosa-suave); }
+.editable .miniatura {
+  width: 130px; aspect-ratio: 4/5; border-radius: 12px; overflow: hidden; background: var(--rosa-claro);
+  display: grid; place-items: center; color: var(--texto-suave); font-size: .85rem; text-align: center;
+}
+.editable .miniatura img, .editable .miniatura canvas { width: 100%; height: 100%; object-fit: cover; }
+.editable .lado-foto { display: flex; flex-direction: column; gap: 6px; }
+.editable .lado-foto .btn { width: 100%; }
+.editable .campos { display: grid; grid-template-columns: 2fr 1fr; gap: 0 12px; }
+.editable .campos .ancho { grid-column: 1 / -1; }
+.editable .campo { margin-bottom: 10px; }
+.editable .campo label { font-size: .85rem; }
+.editable .campo input, .editable .campo textarea, .editable .campo select { padding: .55em .75em; }
+.editable .herramientas { grid-column: 1 / -1; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; border-top: 1px dashed var(--borde); padding-top: 10px; }
+.editable .herramientas .espacio { flex: 1; }
+.interruptor { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; cursor: pointer; user-select: none; }
+.interruptor input { width: 20px; height: 20px; accent-color: var(--rosa); }
+.pista { font-size: .8rem; color: var(--naranja); font-weight: 700; }
+.pagina-pdf { font-size: .8rem; color: var(--texto-suave); font-weight: 700; }
+@media (max-width: 640px) {
+  .editable { grid-template-columns: 1fr; }
+  .editable .lado-foto { flex-direction: row; align-items: center; }
+  .editable .miniatura { width: 96px; flex: none; }
+  .editable .campos { grid-template-columns: 1fr; }
+}
+
+/* Barra de publicar */
+.barra-publicar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; background: #fff; border-top: 2px solid var(--borde);
+  box-shadow: 0 -6px 20px rgba(200, 60, 110, .12);
+}
+.barra-publicar .contenedor { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 0; flex-wrap: wrap; }
+.barra-publicar .texto { font-weight: 800; }
+
+/* Ventana de recorte */
+.modal { position: fixed; inset: 0; z-index: 50; background: rgba(40, 15, 25, .7); display: grid; place-items: center; padding: 12px; }
+.modal-caja { background: #fff; border-radius: 20px; padding: 16px; width: min(760px, 100%); max-height: 96vh; display: flex; flex-direction: column; gap: 10px; }
+.modal-caja h3 { margin: 0; }
+.area-recorte { position: relative; overflow: auto; flex: 1; display: grid; place-items: center; background: #f6eef1; border-radius: 12px; touch-action: none; }
+.area-recorte canvas { max-width: 100%; max-height: 66vh; cursor: crosshair; touch-action: none; }
+.modal-caja .botones { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }

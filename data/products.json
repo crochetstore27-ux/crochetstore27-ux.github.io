@@ -1,0 +1,200 @@
+[
+  {
+    "id": "ramo-3-rosas",
+    "name": "Ramo de 3 rosas",
+    "price": 10.5,
+    "category": "Ramos",
+    "description": "Se pueden agregar más rosas por un costo extra",
+    "image": "img/productos/ramo-3-rosas.jpg",
+    "visible": true
+  },
+  {
+    "id": "ramo-tulipanes",
+    "name": "Ramo de tulipanes",
+    "price": 15.0,
+    "category": "Ramos",
+    "description": "",
+    "image": "img/productos/ramo-tulipanes.jpg",
+    "visible": true
+  },
+  {
+    "id": "ramo-girasoles",
+    "name": "Ramo de girasoles",
+    "price": 25.0,
+    "category": "Ramos",
+    "description": "",
+    "image": "img/productos/ramo-girasoles.jpg",
+    "visible": true
+  },
+  {
+    "id": "ramo-snoopy-tulipanes",
+    "name": "Ramo de Snoopy con tulipanes",
+    "price": 20.0,
+    "category": "Ramos",
+    "description": "",
+    "image": "img/productos/ramo-snoopy-tulipanes.jpg",
+    "visible": true
+  },
+  {
+    "id": "ramo-personaje",
+    "name": "Ramo con personaje personalizado",
+    "price": 12.5,
+    "category": "Ramos",
+    "description": "Puedes agregar más rosas por un costo extra",
+    "image": "img/productos/ramo-personaje.jpg",
+    "visible": true
+  },
+  {
+    "id": "gorrito-frutita-naranja",
+    "name": "Gorrito Frutita naranja",
+    "price": null,
+    "category": "Gorritos para mascotas",
+    "description": "Gorrito con cordones para un ajuste cómodo",
+    "image": "img/productos/gorrito-frutita-naranja.jpg",
+    "visible": true
+  },
+  {
+    "id": "gorrito-fresitas",
+    "name": "Gorrito Fresitas",
+    "price": null,
+    "category": "Gorritos para mascotas",
+    "description": "Gorrito rosa con detalles de fresa",
+    "image": "img/productos/gorrito-fresitas.jpg",
+    "visible": true
+  },
+  {
+    "id": "gorrito-cangrejo",
+    "name": "Gorrito Cangrejo",
+    "price": null,
+    "category": "Gorritos para mascotas",
+    "description": "",
+    "image": "img/productos/gorrito-cangrejo.jpg",
+    "visible": true
+  },
+  {
+    "id": "gorrito-conejito",
+    "name": "Gorrito Conejito",
+    "price": null,
+    "category": "Gorritos para mascotas",
+    "description": "",
+    "image": "img/productos/gorrito-conejito.jpg",
+    "visible": true
+  },
+  {
+    "id": "gorrito-abeja",
+    "name": "Gorrito Abeja",
+    "price": null,
+    "category": "Gorritos para mascotas",
+    "description": "",
+    "image": "img/productos/gorrito-abeja.jpg",
+    "visible": true
+  },
+  {
+    "id": "gorrito-ranita",
+    "name": "Gorrito Ranita",
+    "price": null,
+    "category": "Gorritos para mascotas",
+    "description": "",
+    "image": "img/productos/gorrito-ranita.jpg",
+    "visible": true
+  },
+  {
+    "id": "gorrito-fiesta",
+    "name": "Gorrito de fiesta",
+    "price": null,
+    "category": "Gorritos para mascotas",
+    "description": "",
+    "image": "img/productos/gorrito-fiesta.jpg",
+    "visible": true
+  },
+  {
+    "id": "corona-floral",
+    "name": "Corona floral",
+    "price": null,
+    "category": "Gorritos para mascotas",
+    "description": "Collar de crochet con pompones",
+    "image": "img/productos/corona-floral.jpg",
+    "visible": true
+  },
+  {
+    "id": "ramitos-rosas-colores",
+    "name": "Ramitos de rosas de colores",
+    "price": null,
+    "category": "Flores",
+    "description": "",
+    "image": "img/productos/ramitos-rosas-colores.jpg",
+    "visible": true
+  },
+  {
+    "id": "ramo-rosas-azules-abejita",
+    "name": "Ramo de rosas azules con abejita",
+    "price": null,
+    "category": "Flores",
+    "description": "",
+    "image": "img/productos/ramo-rosas-azules-abejita.jpg",
+    "visible": true
+  },
+  {
+    "id": "ramo-tulipanes-rosa-azul",
+    "name": "Ramo de tulipanes y rosa azul",
+    "price": null,
+    "category": "Flores",
+    "description": "",
+    "image": "img/productos/ramo-tulipanes-rosa-azul.jpg",
+    "visible": true
+  },
+  {
+    "id": "ramo-3-rosas-azules",
+    "name": "Ramo de 3 rosas azules",
+    "price": null,
+    "category": "Flores",
+    "description": "",
+    "image": "img/productos/ramo-3-rosas-azules.jpg",
+    "visible": true
+  },
+  {
+    "id": "ramo-rosas-azules-blanca",
+    "name": "Ramo de rosas azules con rosa blanca",
+    "price": null,
+    "category": "Flores",
+    "description": "",
+    "image": "img/productos/ramo-rosas-azules-blanca.jpg",
+    "visible": true
+  },
+  {
+    "id": "mini-ramos-rosas",
+    "name": "Mini ramos de rosas",
+    "price": null,
+    "category": "Flores",
+    "description": "",
+    "image": "img/productos/mini-ramos-rosas.jpg",
+    "visible": true
+  },
+  {
+    "id": "ramo-tulipanes-superheroe",
+    "name": "Ramo de tulipanes de superhéroe",
+    "price": null,
+    "category": "Flores",
+    "description": "",
+    "image": "img/productos/ramo-tulipanes-superheroe.jpg",
+    "visible": true
+  },
+  {
+    "id": "ramo-flor-tortuguita",
+    "name": "Ramo de flor con tortuguita",
+    "price": null,
+    "category": "Flores",
+    "description": "",
+    "image": "img/productos/ramo-flor-tortuguita.jpg",
+    "visible": true
+  },
+  {
+    "id": "llaveros-macetitas",
+    "name": "Llaveros de macetitas",
+    "price": null,
+    "category": "Flores",
+    "description": "",
+    "image": "img/productos/llaveros-macetitas.jpg",
+    "visible": true
+  }
+]
